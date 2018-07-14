@@ -1,0 +1,55 @@
+h1 {
+  font-size: 400%;
+  background-color: maroon;
+  color: white;
+}
+
+
+/* Table styles */
+table {
+    width: 75%;
+    border-collapse: collapse;
+    align-content: center;
+    margin-bottom: 5%;
+}
+  
+  
+caption {
+  font-weight: 800;
+  font-size: 40px;
+}
+
+
+th {
+    border: 1px solid black;
+    color: black;
+    font-size: 40px;
+    text-align: center;
+    background-color: #DCDCDC;
+}
+
+  
+tr:hover {
+    background-color:lightgrey;
+}
+  
+  
+td {
+    font-weight: 400;
+    font-size: 25px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+
+/* Color code important trends */
+.lightUse {
+    color: blue;
+    font-weight: bold;
+}
+
+
+.heavyUse {
+    color: red;
+    font-weight: bold;
+}
