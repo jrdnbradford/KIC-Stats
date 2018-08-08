@@ -12,7 +12,7 @@ See the following sites for more information about KIC scanners:
 ## Using the Code
 This front-end project was built with basic HTML, CSS, and vanilla JS. Loading the XML data from your computer will require that you run a local web server as browsers restrict cross-origin HTTP requests initiated from within local scripts as a security precaution.
 
-Configure the KIC scanner to send the daily statistics email in KIC Setup. Download the zip file with the XML data that is attached to the email, unzip the file, and rename the file to "yourfilename.xml". Ensure that the name of the file is coded into the array variable "XMLFiles" in [script.js](script.js). Repeat this process with as many XML files as you wish. Note that the script currently looks for the XML files within a directory entitled "XML".
+Configure the KIC scanner to send the daily statistics email in KIC Setup. Download the zip file with the XML data that is attached to the email, unzip the file, and rename the file to "yourfilename.xml". Ensure that the name of the file is coded into the array variable "XMLFiles" in [script.js](assets/script.js). Repeat this process with as many XML files as you wish. Note that the script currently looks for the XML files within a directory entitled "XML".
 
 The script can create two types of tables. One includes the amount of data sent, total number of scans, total number of sessions, and the average number of scans per session for each date that the KIC was able to write that day's data. The other is a high level view that looks at the entirety of the recorded data in the file and provides some highlights.
 
