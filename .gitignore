@@ -42,3 +42,6 @@ Thumbs.db
 ##############
 XML/
 *.xml
+
+# PNG files #
+*.png

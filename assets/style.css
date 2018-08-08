@@ -2,33 +2,30 @@ h1 {
   font-size: 400%;
   background-color: maroon;
   color: white;
+  margin-bottom: 0;
 }
-
 
 /* Table styles */
 table {
-    width: 75%;
+    width: 85%;
     border-collapse: collapse;
     align-content: center;
     margin-bottom: 5%;
 }
-  
   
 caption {
   font-weight: 800;
   font-size: 40px;
 }
 
-
 th {
     border: 1px solid black;
     color: black;
-    font-size: 40px;
+    font-size: 30px;
     text-align: center;
     background-color: #DCDCDC;
 }
 
-  
 tr:hover {
     background-color:lightgrey;
 }
@@ -41,15 +38,33 @@ td {
     text-align: center;
 }
 
-
 /* Color code important trends */
 .lightUse {
     color: blue;
     font-weight: bold;
 }
 
-
 .heavyUse {
     color: red;
     font-weight: bold;
+}
+
+/* Nav styles */
+button {
+    background-color: #333;
+    color: white;
+    font-size: 150%;
+    border: none;
+    padding: 1%;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: rgb(186, 182, 182);
+    color: #333;
+}
+
+.topnav {
+    background-color: #333;
+    margin-bottom: 3%;
 }
