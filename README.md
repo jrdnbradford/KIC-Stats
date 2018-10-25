@@ -1,5 +1,7 @@
-# kic-stats
-The code in this repo takes the daily usage statistics XML data output by Knowledge Imaging Center (KIC) scanner software (version 4.2.0.0) and displays it in a web browser for general analysis that may help inform business/budgetary decisions and KIC configuration settings. 
+# KIC-stats
+The code in this repo takes the daily usage statistics XML data output by Knowledge Imaging Center (KIC) scanner software and displays it in a web browser for general analysis that may help inform business/budgetary decisions and KIC configuration settings. 
+
+This code was originally developed and tested using XML output from version 4.2.0.0 of the software. The XML appears to be consistent between this version and at least version 6.0.3.1.
 
 It should be known that the KIC Fleet Manager software available for purchase from Image Access provides much more functionality and that the code in this repo is meant to be an open-source alternative for institutions that wish to have a way to look at a cleaned up version of important data without the cost (and all the extra features) that the Fleet Manager software provides.
 
