@@ -55,14 +55,11 @@ function getDate(date) {
 } //Returns reader friendly date
 
 function getHighestNum(array) {
-    let highestNum = 0;
+    let parsedData = [];
     for (let i = 0; i < array.length; i++) {
-        let potentialHighNum = parseInt(array[i].textContent);
-        if (potentialHighNum > highestNum) {
-            highestNum = potentialHighNum;
-        }
+        parsedData.push(parseInt(array[i].textContent));
     }
-    return highestNum; 
+    return Math.max(...parsedData); 
 } //Returns highest number in passed array
 
 function getRunningTotal(array) {
