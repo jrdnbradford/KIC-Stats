@@ -12,6 +12,7 @@ let exhaustiveDetailBTN = document.getElementById('ExhaustiveDetail'); //button
 let glanceBTN = document.getElementById('Total'); //button
 let DIV = document.getElementById('Stats'); //div 
 
+//Adds event listeners for buttons
 exhaustiveDetailBTN.addEventListener('click', function() {
     removeChildren();
     getXML(createExhaustiveTable);
@@ -40,7 +41,7 @@ function getAvg(array) {
     let runningTotal = 0;
     for (let i = 0; i < array.length; i++) {
         let number = parseInt(array[i].textContent);
-        runningTotal = runningTotal + number;  
+        runningTotal += number;  
    }
     let avg = Math.round(runningTotal / array.length);
     return avg;
@@ -66,7 +67,7 @@ function getRunningTotal(array) {
     let runningTotal = 0;
     for (let i = 0; i < array.length; i++) {
         let number = parseInt(array[i].textContent);
-        runningTotal = runningTotal + number;
+        runningTotal += number;
    }
    return runningTotal;
 } //Returns total scans for a particular KIC
