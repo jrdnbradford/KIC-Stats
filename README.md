@@ -1,4 +1,4 @@
-# KIC-stats
+# KIC-Stats
 The code in this repo takes the daily usage statistics XML data output by Knowledge Imaging Center (KIC) scanner software and displays it in a web browser for general analysis that may help inform business/budgetary decisions and KIC configuration settings. 
 
 This code was originally developed and tested using XML output from version 4.2.0.0 of the software. The XML appears to be consistent between this version and at least version 6.0.3.1.
