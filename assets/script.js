@@ -1,9 +1,9 @@
 "use strict";
 
-var XMLFiles = [
-    'XML/bookeye1.xml', 
-    'XML/bookeye2.xml', 
-    'XML/bookeye3.xml'
+let XMLFiles = [
+    'xml/bookeye1.xml', 
+    'xml/bookeye2.xml', 
+    'xml/bookeye3.xml'
 ]; //Add file paths here
 
 getXML(createSummary);
@@ -14,30 +14,34 @@ let DIV = document.getElementById('Stats'); //div
 
 //Adds event listeners for buttons
 detailBTN.addEventListener('click', function() {
-    removeChildren();
+    removeChildren(DIV);
     getXML(createTable);
 });
 
 summaryBTN.addEventListener('click', function() {
-    removeChildren();
+    removeChildren(DIV);
     getXML(createSummary);
 });
 
 
-function appendDataToRow(data, newTableRow) {
-    let newTableData = document.createElement('td');
-    newTableData.textContent = data;
-    newTableRow.appendChild(newTableData);
-} //Creates table data element, sets its content to whatever data is passed, and appends it
+function appendDataToRow(tableElem, data, tagName) {
+    let newTableRow = document.createElement('tr');
+    tableElem.appendChild(newTableRow);
+    
+    data.forEach(function(datum) {
+        let newElem = document.createElement(tagName);
+        newElem.textContent = datum;
+        newTableRow.appendChild(newElem);
+    });
+} //Appends TR and THs or TDs
 
 
-function appendHeader(headerAry, newTableRow) {
-    headerAry.forEach(function(header) {
-        let newTableHeader = document.createElement('th');
-        newTableHeader.textContent = header;
-        newTableRow.appendChild(newTableHeader);
-    }); 
-} //Appends table header element for each header in passed array to create columns
+function appendTable() {
+    let newTable = document.createElement('table');
+    newTable.align = 'center';
+    DIV.appendChild(newTable); 
+    return newTable;
+} //Appends and returns table element
 
 
 function getAvg(array) {
@@ -46,8 +50,7 @@ function getAvg(array) {
         let number = parseInt(array[i].textContent);
         runningTotal += number;  
    }
-    let avg = Math.round(runningTotal / array.length);
-    return avg;
+   return Math.round(runningTotal / array.length);
 } //Returns avg number of scans for a particular KIC
 
 
@@ -55,8 +58,7 @@ function getFriendlyDate(date) {
     let day = date.getDate();
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
-    date = month + "/" + day + "/" + year;
-    return date;
+    return month + "/" + day + "/" + year;
 } //Returns reader friendly date
 
 
@@ -86,7 +88,7 @@ function getXML(funct) {
             if (this.readyState === 4 && this.status === 404) {
                 alert("Something went wrong. See Web Console for more details.");
             } else if (this.readyState === 4 && this.status === 200) {
-                funct(XHR)
+                funct(XHR);
             }
         }
         XHR.open('GET', XMLFile);
@@ -95,19 +97,16 @@ function getXML(funct) {
 } //Use AJAX to get XML data from each file in the XMLFiles array and run passed function
 
 
-function removeChildren() {
-   while (DIV.firstChild) {
-       DIV.removeChild(DIV.firstChild);
+function removeChildren(elem) {
+   while (elem.firstChild) {
+        elem.removeChild(elem.firstChild);
    }   
-} //Removes all elements nested within <div id="Stats">
+} //Removes all elements nested within passed element>
 
 
 //Main functions
 function createTable(XHR) {
-    let newTable = document.createElement('table');
-    newTable.align = 'center';
-    DIV.appendChild(newTable); //Append table
-
+    let newTable = appendTable();
     newTable.addEventListener('click', (e) => {
         if (e.target.nodeName == 'TD') {
             if (e.target.parentNode.style.backgroundColor == 'yellow') {
@@ -121,10 +120,7 @@ function createTable(XHR) {
     let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
     let newCaption = document.createElement('caption');
     newCaption.textContent = compName;
-    newTable.appendChild(newCaption); //Append KIC computer name as caption
-
-    let newTableRow = document.createElement('tr');
-    newTable.appendChild(newTableRow); //Append table header row
+    newTable.appendChild(newCaption);
     
     let tableHeaderAry = [
         /*Column 1*/ "Date", 
@@ -134,7 +130,7 @@ function createTable(XHR) {
         /*Column 5*/ "Avg Scans/Session" 
     ]; 
     
-    appendHeader(tableHeaderAry, newTableRow);
+    appendDataToRow(newTable, tableHeaderAry, 'th');
 
     let dateAry = XHR.responseXML.getElementsByTagName('Date');
     let sizeAry = XHR.responseXML.getElementsByTagName('Size');
@@ -147,45 +143,31 @@ function createTable(XHR) {
         let rowDate = new Date(dateAry[i].textContent);
 
         while (rowDate > dateTracker) {
-            newTableRow = document.createElement('tr');
-            newTable.appendChild(newTableRow); //Append table row
-            appendDataToRow(getFriendlyDate(dateTracker), newTableRow);
-            for (let i = 0; i < 4; i++) {
-                appendDataToRow("*", newTableRow);
-            } //Append empty TDs
+            let data = [getFriendlyDate(dateTracker), "*", "*", "*", "*"]
+            appendDataToRow(newTable, data, 'td');
             dateTracker = new Date(dateTracker.getFullYear(), dateTracker.getMonth(), dateTracker.getDate() + 1);
         } //Add rows with no data
                 
-        newTableRow = document.createElement('tr');
-        newTable.appendChild(newTableRow); //Append table row
-        appendDataToRow(getFriendlyDate(rowDate), newTableRow); //Column 1
+        let date = getFriendlyDate(rowDate); //Column 1
     
         //XML has strange size format that requires dividing by 100 to return size in megabytes
         let size = parseInt(sizeAry[i].textContent); 
         let sizeMB = Math.round(size / 100);
-        appendDataToRow(sizeMB, newTableRow); //Column 2
-
         let totalScans = parseInt(scansAry[i].textContent);
-        appendDataToRow(totalScans, newTableRow); //Column 3
-
         let totalSes = totalSesAry[i].textContent;
-        appendDataToRow(totalSes, newTableRow); //Column 4
-
         let avgScansPerSes = Math.round(totalScans / totalSes);
-        appendDataToRow(avgScansPerSes, newTableRow); //Column 5
+
+        let detailData = [date, sizeMB, totalScans, totalSes, avgScansPerSes];
+        appendDataToRow(newTable, detailData, 'td');
             
         dateTracker = new Date(dateTracker.getFullYear(), dateTracker.getMonth(), dateTracker.getDate() + 1);
-    } //Each iteration of this loop creates a single row complete with data in the table
+    } //Each iteration of this loop creates a row in the table
 } 
 
 
 function createSummary(XHR) {
-    let newTable = document.createElement('table');
-    newTable.align = 'center';
-    DIV.appendChild(newTable); //Append table
-    
+    let newTable = appendTable();
     let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
-    
     let dateAry = XHR.responseXML.getElementsByTagName('Date');
     let dateTracker = new Date(dateAry[0].textContent);
     let lastDate = new Date(dateAry[dateAry.length - 1].textContent);
@@ -193,10 +175,7 @@ function createSummary(XHR) {
     
     let newCaption = document.createElement('caption');
     newCaption.textContent = compName + " (" + dateRange + ")";
-    newTable.appendChild(newCaption); //Append KIC computer name and date range as caption 
-
-    let newTableRow = document.createElement('tr');
-    newTable.appendChild(newTableRow); //Append table header row
+    newTable.appendChild(newCaption); 
 
     let tableHeaderAry = [
         /*Column 1*/ "Data Sent (MBs)",
@@ -206,18 +185,24 @@ function createSummary(XHR) {
         /*Column 5*/ "Highest # of Scans in a Day"
     ];
     
-    appendHeader(tableHeaderAry, newTableRow); //Append header row
-
-    newTableRow = document.createElement('tr');
-    newTable.appendChild(newTableRow); //Append table row
+    appendDataToRow(newTable, tableHeaderAry, 'th'); //Append header row
 
     //XML has strange size format that requires dividing by 100 to return size in megabytes
     let sizeAry = XHR.responseXML.getElementsByTagName('Size');
-    appendDataToRow(Math.round((getRunningTotal(sizeAry) / 100)), newTableRow); //Column 1
-    appendDataToRow(Math.round((getAvg(sizeAry) / 100)), newTableRow); //Column 2
-
+    let dataSentMBs = Math.round(getRunningTotal(sizeAry) / 100);
+    let avgDataDayMBs = Math.round(getAvg(sizeAry) / 100);
     let scansAry = XHR.responseXML.getElementsByTagName('Scans');
-    appendDataToRow(getRunningTotal(scansAry), newTableRow); //Column 3
-    appendDataToRow(getAvg(scansAry), newTableRow); //Column 4
-    appendDataToRow(getHighestNum(scansAry), newTableRow); //Column 5
+    let totalScans = getRunningTotal(scansAry);
+    let avgScansDay = getAvg(scansAry);
+    let highestScans = getHighestNum(scansAry);
+
+    let summaryData = [
+        /*Column 1*/ dataSentMBs, 
+        /*Column 2*/ avgDataDayMBs, 
+        /*Column 3*/ totalScans, 
+        /*Column 4*/ avgScansDay, 
+        /*Column 5*/ highestScans
+    ];
+    
+    appendDataToRow(newTable, summaryData, 'td');
 }
