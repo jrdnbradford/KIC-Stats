@@ -36,10 +36,10 @@ function appendDataToRow(tableElem, data, tagName) {
 } //Appends TR and THs or TDs
 
 
-function appendTable() {
+function appendTable(elem) {
     let newTable = document.createElement('table');
     newTable.align = 'center';
-    DIV.appendChild(newTable); 
+    elem.appendChild(newTable); 
     return newTable;
 } //Appends and returns table element
 
@@ -106,7 +106,7 @@ function removeChildren(elem) {
 
 //Main functions
 function createTable(XHR) {
-    let newTable = appendTable();
+    let newTable = appendTable(DIV);
     newTable.addEventListener('click', (e) => {
         if (e.target.nodeName == 'TD') {
             if (e.target.parentNode.style.backgroundColor == 'yellow') {
@@ -143,8 +143,8 @@ function createTable(XHR) {
         let rowDate = new Date(dateAry[i].textContent);
 
         while (rowDate > dateTracker) {
-            let data = [getFriendlyDate(dateTracker), "*", "*", "*", "*"]
-            appendDataToRow(newTable, data, 'td');
+            let emptyData = [getFriendlyDate(dateTracker), "*", "*", "*", "*"]
+            appendDataToRow(newTable, emptyData, 'td');
             dateTracker = new Date(dateTracker.getFullYear(), dateTracker.getMonth(), dateTracker.getDate() + 1);
         } //Add rows with no data
                 
@@ -166,7 +166,7 @@ function createTable(XHR) {
 
 
 function createSummary(XHR) {
-    let newTable = appendTable();
+    let newTable = appendTable(DIV);
     let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
     let dateAry = XHR.responseXML.getElementsByTagName('Date');
     let dateTracker = new Date(dateAry[0].textContent);
