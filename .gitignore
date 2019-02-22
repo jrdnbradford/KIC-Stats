@@ -40,7 +40,7 @@ Thumbs.db
 
 # XML files #
 ##############
-XML/
+xml/
 *.xml
 
 # PNG files #
