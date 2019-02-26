@@ -10,16 +10,16 @@ getXML(createSummary);
 
 let detailBTN = document.getElementById('Detail'); //button
 let summaryBTN = document.getElementById('Summary'); //button
-let DIV = document.getElementById('Stats'); //div 
+let mainDIV = document.getElementById('Stats'); //div 
 
 //Adds event listeners for buttons
 detailBTN.addEventListener('click', function() {
-    removeChildren(DIV);
-    getXML(createTable);
+    removeChildren(mainDIV);
+    getXML(createDailyDetailTable);
 });
 
 summaryBTN.addEventListener('click', function() {
-    removeChildren(DIV);
+    removeChildren(mainDIV);
     getXML(createSummary);
 });
 
@@ -101,12 +101,12 @@ function removeChildren(elem) {
    while (elem.firstChild) {
         elem.removeChild(elem.firstChild);
    }   
-} //Removes all elements nested within passed element>
+} //Removes all elements nested within passed element
 
 
 //Main functions
-function createTable(XHR) {
-    let newTable = appendTable(DIV);
+function createDailyDetailTable(XHR) {
+    let newTable = appendTable(mainDIV);
     newTable.addEventListener('click', (e) => {
         if (e.target.nodeName == 'TD') {
             if (e.target.parentNode.style.backgroundColor == 'yellow') {
@@ -122,79 +122,88 @@ function createTable(XHR) {
     newCaption.textContent = compName;
     newTable.appendChild(newCaption);
     
-    let tableHeaderAry = [
+    let summaryTableHeaders = [
         /*Column 1*/ "Date", 
         /*Column 2*/ "Data Sent (MBs)", 
         /*Column 3*/ "Total Scans",
         /*Column 4*/ "Sessions", 
         /*Column 5*/ "Avg Scans/Session" 
-    ]; 
+    ]; //Detailed table header row created by createDailyDetailTable()
     
-    appendDataToRow(newTable, tableHeaderAry, 'th');
+    appendDataToRow(newTable, summaryTableHeaders, 'th');
 
-    let dateAry = XHR.responseXML.getElementsByTagName('Date');
-    let sizeAry = XHR.responseXML.getElementsByTagName('Size');
-    let scansAry = XHR.responseXML.getElementsByTagName('Scans');
-    let totalSesAry = XHR.responseXML.getElementsByTagName('Ss');
-
-    let dateTracker = new Date(dateAry[0].textContent);
+    let dates = XHR.responseXML.getElementsByTagName('Date');
+    let sizes = XHR.responseXML.getElementsByTagName('Size');
+    let scans = XHR.responseXML.getElementsByTagName('Scans');
+    let sessions = XHR.responseXML.getElementsByTagName('Ss');
+    let dateTracker = new Date(dates[0].textContent);
     
-    for (let i = 0; i < scansAry.length; i++) {
-        let rowDate = new Date(dateAry[i].textContent);
+    for (let i = 0; i < scans.length; i++) {
+        let rowDate = new Date(dates[i].textContent);
 
         while (rowDate > dateTracker) {
-            let emptyData = [getFriendlyDate(dateTracker), "*", "*", "*", "*"]
-            appendDataToRow(newTable, emptyData, 'td');
+            let tableEmptyData = [
+                /*Column 1*/ getFriendlyDate(dateTracker), 
+                /*Column 2*/ "*", 
+                /*Column 3*/ "*", 
+                /*Column 4*/ "*", 
+                /*Column 5*/ "*"
+            ]; //Daily detail empty data row created by createDailyDetailTable()
+
+            appendDataToRow(newTable, tableEmptyData, 'td');
             dateTracker = new Date(dateTracker.getFullYear(), dateTracker.getMonth(), dateTracker.getDate() + 1);
         } //Add rows with no data
                 
-        let date = getFriendlyDate(rowDate); //Column 1
-    
-        //XML has strange size format that requires dividing by 100 to return size in megabytes
-        let size = parseInt(sizeAry[i].textContent); 
+        let date = getFriendlyDate(rowDate);
+        let size = parseInt(sizes[i].textContent); 
         let sizeMB = Math.round(size / 100);
-        let totalScans = parseInt(scansAry[i].textContent);
-        let totalSes = totalSesAry[i].textContent;
+        let totalScans = parseInt(scans[i].textContent);
+        let totalSes = sessions[i].textContent;
         let avgScansPerSes = Math.round(totalScans / totalSes);
 
-        let detailData = [date, sizeMB, totalScans, totalSes, avgScansPerSes];
-        appendDataToRow(newTable, detailData, 'td');
-            
+        let tableDetailData = [
+            /*Column 1*/ date, 
+            /*Column 2*/ sizeMB, 
+            /*Column 3*/ totalScans, 
+            /*Column 4*/ totalSes, 
+            /*Column 5*/ avgScansPerSes
+        ]; //Daily detail data row created by createDailyDetailTable()
+
+        appendDataToRow(newTable, tableDetailData, 'td');
         dateTracker = new Date(dateTracker.getFullYear(), dateTracker.getMonth(), dateTracker.getDate() + 1);
     } //Each iteration of this loop creates a row in the table
 } 
 
 
 function createSummary(XHR) {
-    let newTable = appendTable(DIV);
+    let newTable = appendTable(mainDIV);
     let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
-    let dateAry = XHR.responseXML.getElementsByTagName('Date');
-    let dateTracker = new Date(dateAry[0].textContent);
-    let lastDate = new Date(dateAry[dateAry.length - 1].textContent);
+    let dates = XHR.responseXML.getElementsByTagName('Date');
+    let dateTracker = new Date(dates[0].textContent);
+    let lastDate = new Date(dates[dates.length - 1].textContent);
     let dateRange = getFriendlyDate(dateTracker) + " - " + getFriendlyDate(lastDate);
     
     let newCaption = document.createElement('caption');
     newCaption.textContent = compName + " (" + dateRange + ")";
     newTable.appendChild(newCaption); 
 
-    let tableHeaderAry = [
+    let summaryTableHeaders = [
         /*Column 1*/ "Data Sent (MBs)",
         /*Column 2*/ "Avg Data/Day (MBs)",
         /*Column 3*/ "Total Scans",
         /*Column 4*/ "Avg Scans/Day",
         /*Column 5*/ "Highest # of Scans in a Day"
-    ];
+    ]; //Summary table header row created by createSummary()
     
-    appendDataToRow(newTable, tableHeaderAry, 'th'); //Append header row
+    appendDataToRow(newTable, summaryTableHeaders, 'th');
 
-    //XML has strange size format that requires dividing by 100 to return size in megabytes
-    let sizeAry = XHR.responseXML.getElementsByTagName('Size');
-    let dataSentMBs = Math.round(getRunningTotal(sizeAry) / 100);
-    let avgDataDayMBs = Math.round(getAvg(sizeAry) / 100);
-    let scansAry = XHR.responseXML.getElementsByTagName('Scans');
-    let totalScans = getRunningTotal(scansAry);
-    let avgScansDay = getAvg(scansAry);
-    let highestScans = getHighestNum(scansAry);
+    let sizes = XHR.responseXML.getElementsByTagName('Size');
+    let dataSentMBs = Math.round(getRunningTotal(sizes) / 100);
+    let avgDataDayMBs = Math.round(getAvg(sizes) / 100);
+    let scans = XHR.responseXML.getElementsByTagName('Scans');
+    let totalScans = getRunningTotal(scans);
+    let avgScansDay = getAvg(scans);
+    let highestScans = getHighestNum(scans);
 
     let summaryData = [
         /*Column 1*/ dataSentMBs, 
@@ -202,7 +211,7 @@ function createSummary(XHR) {
         /*Column 3*/ totalScans, 
         /*Column 4*/ avgScansDay, 
         /*Column 5*/ highestScans
-    ];
+    ]; //Summary table data row created by createSummary()
     
     appendDataToRow(newTable, summaryData, 'td');
 }
