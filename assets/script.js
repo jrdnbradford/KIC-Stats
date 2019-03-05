@@ -54,6 +54,11 @@ function getAvg(array) {
 } //Returns avg number of scans for a particular KIC
 
 
+function getData(XHR, tagName) {
+    return XHR.responseXML.getElementsByTagName(tagName);
+} //Returns array of data from XML
+
+
 function getFriendlyDate(date) {
     let day = date.getDate();
     let month = date.getMonth() + 1;
@@ -117,7 +122,7 @@ function createDailyDetailTable(XHR) {
         }
     }); //Add event listener to table to highlight clicked table rows
     
-    let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
+    let compName = getData(XHR, 'ComputerName')[0].textContent;
     let newCaption = document.createElement('caption');
     newCaption.textContent = compName;
     newTable.appendChild(newCaption);
@@ -132,10 +137,10 @@ function createDailyDetailTable(XHR) {
     
     appendDataToRow(newTable, summaryTableHeaders, 'th');
 
-    let dates = XHR.responseXML.getElementsByTagName('Date');
-    let sizes = XHR.responseXML.getElementsByTagName('Size');
-    let scans = XHR.responseXML.getElementsByTagName('Scans');
-    let sessions = XHR.responseXML.getElementsByTagName('Ss');
+    let dates = getData(XHR, 'Date');
+    let sizes = getData(XHR, 'Size');
+    let scans = getData(XHR, 'Scans');
+    let sessions = getData(XHR, 'Ss');
     let dateTracker = new Date(dates[0].textContent);
     
     for (let i = 0; i < scans.length; i++) {
@@ -177,11 +182,11 @@ function createDailyDetailTable(XHR) {
 
 function createSummary(XHR) {
     let newTable = appendTable(mainDIV);
-    let compName = XHR.responseXML.getElementsByTagName('ComputerName')[0].textContent;
-    let dates = XHR.responseXML.getElementsByTagName('Date');
-    let dateTracker = new Date(dates[0].textContent);
+    let compName = getData(XHR, 'ComputerName')[0].textContent;
+    let dates = getData(XHR, 'Date');
+    let firstDate = new Date(dates[0].textContent);
     let lastDate = new Date(dates[dates.length - 1].textContent);
-    let dateRange = getFriendlyDate(dateTracker) + " - " + getFriendlyDate(lastDate);
+    let dateRange = getFriendlyDate(firstDate) + " - " + getFriendlyDate(lastDate);
     
     let newCaption = document.createElement('caption');
     newCaption.textContent = compName + " (" + dateRange + ")";
@@ -197,10 +202,10 @@ function createSummary(XHR) {
     
     appendDataToRow(newTable, summaryTableHeaders, 'th');
 
-    let sizes = XHR.responseXML.getElementsByTagName('Size');
+    let sizes = getData(XHR, 'Size');
     let dataSentMBs = Math.round(getRunningTotal(sizes) / 100);
     let avgDataDayMBs = Math.round(getAvg(sizes) / 100);
-    let scans = XHR.responseXML.getElementsByTagName('Scans');
+    let scans = getData(XHR, 'Scans');
     let totalScans = getRunningTotal(scans);
     let avgScansDay = getAvg(scans);
     let highestScans = getHighestNum(scans);
